@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:layout/chat_entry.dart';
+
+import 'chat.dart';
+import 'chat_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -74,6 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double _spacing = 32;
 
+  bool _isRecording = false;
+
+  String get _recordingString => _isRecording ? 'Recording On' : '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,111 +98,69 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: const [
-              SingleChat(),
-              SizedBox(height: 32),
-              SingleChat(),
-            ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: const [
+                    SingleChat(
+                      chat: Chat(
+                        fromName: 'You',
+                        toName: 'Everyone',
+                        time: '2:09 PM',
+                        text: 'Hello World',
+                      ),
+                    ),
+                    SizedBox(height: 32),
+                    SingleChat(
+                      chat: Chat(
+                        fromName: 'You',
+                        toName: 'Everyone',
+                        time: '2:09 PM',
+                        text: 'Hello World',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            decoration: const BoxDecoration(
+              color: Color(0xFFEFEFF4),
+              border: Border(
+                bottom: BorderSide(color: Color(0xFFC0C0CF)),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.person_2_outlined,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                Text(
+                  'Who can see your messages. $_recordingString',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: ChatEntry(names: ['Rebekah']),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class SingleChat extends StatefulWidget {
-  const SingleChat({Key? key}) : super(key: key);
-
-  @override
-  State<SingleChat> createState() => _SingleChatState();
-}
-
-class _SingleChatState extends State<SingleChat> {
-  bool actionsExpanded = false;
-
-  final String fromName = 'You';
-
-  final String toName = 'Everyone';
-
-  final String time = '2:08 PM';
-
-  final String text = 'export FLUTTER_SDK=\$HOME/flutter\n\nexport DART_SDK=\$FLUTTER_SDK/\n\n'
-      'bin/cache/dart-sdk\n\nexport PATH=\$PATH:\$FLUTTER SDK/\n\nbin: \$DART_SDK/bin';
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const SizedBox(width: 56),
-            Text(fromName),
-            const Text(' to '),
-            Text(
-              toName,
-              style: const TextStyle(color: Colors.lightBlue),
-            ),
-            const SizedBox(width: 16),
-            Text(time),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-              ),
-              child: const Center(
-                child: Text(
-                  'D',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.lightBlue,
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-                child: Text(text),
-              ),
-            ),
-            const SizedBox(width: 8),
-            if (actionsExpanded)
-              Column(children: const [
-                Text('Copy'),
-                Text('Quote'),
-                Text('Button'),
-              ])
-            else
-              IconButton(
-                onPressed: () {
-                  print('pressed actions');
-                  setState(() {
-                    actionsExpanded = !actionsExpanded;
-                  });
-                },
-                icon: const Text('...'),
-              ),
-          ],
-        ),
-      ],
     );
   }
 }
