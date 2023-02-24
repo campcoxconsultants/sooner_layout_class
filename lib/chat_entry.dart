@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'chat.dart';
+
 class ChatEntry extends StatefulWidget {
   const ChatEntry({
     super.key,
     required this.names,
+    required this.addChat,
   });
 
   final List<String> names;
+
+  final void Function(Chat chat) addChat;
 
   @override
   State<ChatEntry> createState() => _ChatEntryState();
@@ -17,7 +22,7 @@ class _ChatEntryState extends State<ChatEntry> {
 
   late String _selectedName;
   late List<String> _names;
-  late final TextEditingController _controller;
+  late final _ChatTextController _controller;
 
   @override
   void initState() {
@@ -26,7 +31,7 @@ class _ChatEntryState extends State<ChatEntry> {
     _selectedName = widget.names.first;
     _names = ['Everyone', ...widget.names];
 
-    _controller = TextEditingController()..addListener(_onTextChanged);
+    _controller = _ChatTextController(maxCharacters: _maxCharacters)..addListener(_onTextChanged);
   }
 
   @override
@@ -39,20 +44,55 @@ class _ChatEntryState extends State<ChatEntry> {
 
   int get _charactersRemaining => _maxCharacters - _controller.text.length;
 
-  _onTextChanged() {
+  bool get _canAddText => _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
+
+  Color get _charactersRemainingColor => _charactersRemaining < 0 ? Colors.red : Colors.black;
+
+  void _onTextChanged() {
     final text = _controller.text;
 
+    if (text.length > _maxCharacters) {
+      final currentOffset = _controller.selection.end;
+      _controller.text = text.substring(text.length - _maxCharacters);
+      _controller.selection = TextSelection.collapsed(offset: currentOffset - 1);
+    }
+
     if (text.contains(RegExp('shit'))) {
+      final selection = _controller.selection;
       _controller.text = text.replaceAll('shit', '****');
+      _controller.selection = selection;
     }
     setState(() {});
+  }
+
+  void _callAddText() {
+    print('Add message: ${_controller.text}');
+
+    // TODO: figure out how to address this
+    widget.addChat(
+      Chat(
+        fromName: 'You',
+        toName: _selectedName,
+        // TODO: Add time
+        time: '12:07',
+        text: _controller.text,
+      ),
+    );
+
+    setState(() {
+      _controller.text = '';
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_toSelection, _textEntry, _iconRow],
+      children: [
+        _toSelection,
+        _textEntry,
+        _iconRow,
+      ],
     );
   }
 
@@ -103,12 +143,38 @@ class _ChatEntryState extends State<ChatEntry> {
           maxLines: 4,
           controller: _controller,
         ),
-        Text('$_charactersRemaining char left')
+        Text(
+          '$_charactersRemaining char left',
+          style: TextStyle(color: _charactersRemainingColor),
+        )
       ],
     );
   }
 
   Widget get _iconRow {
-    return SizedBox();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(
+          onPressed: _canAddText ? _callAddText : null,
+          icon: const Icon(Icons.send),
+        ),
+      ],
+    );
+  }
+}
+
+class _ChatTextController extends TextEditingController {
+  _ChatTextController({super.text, required this.maxCharacters});
+
+  final int maxCharacters;
+
+  @override
+  TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
+    // TODO: implement buildTextSpan
+    return TextSpan(
+      text: text.substring(0, maxCharacters),
+      style: style?.copyWith(color: Colors.red),
+    );
   }
 }

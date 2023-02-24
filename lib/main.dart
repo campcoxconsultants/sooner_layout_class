@@ -82,8 +82,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String get _recordingString => _isRecording ? 'Recording On' : '';
 
+  List<Chat> _chats = [
+    const Chat(
+      fromName: 'You',
+      toName: 'Everyone',
+      time: '2:09 PM',
+      text: 'Hello World',
+    ),
+    const Chat(
+      fromName: 'You',
+      toName: 'Everyone',
+      time: '2:09 PM',
+      text: 'Hello World',
+    )
+  ];
+
   @override
   Widget build(BuildContext context) {
+    print('build called');
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -106,24 +123,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  children: const [
-                    SingleChat(
-                      chat: Chat(
-                        fromName: 'You',
-                        toName: 'Everyone',
-                        time: '2:09 PM',
-                        text: 'Hello World',
+                  children: [
+                    for (int i = 0; i < _chats.length; i++)
+                      SingleChat(
+                        chat: _chats[i],
+                        paddingSize: i == _chats.length - 1 ? 0 : 32,
                       ),
-                    ),
-                    SizedBox(height: 32),
-                    SingleChat(
-                      chat: Chat(
-                        fromName: 'You',
-                        toName: 'Everyone',
-                        time: '2:09 PM',
-                        text: 'Hello World',
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -155,9 +160,29 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: ChatEntry(names: ['Rebekah']),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ChatEntry(
+              names: const ['Rebekah'],
+              addChat: (newChat) {
+                _chats.add(newChat);
+                setState(() {});
+
+                // TODO: Fix this to navigate at the same time
+                Future.delayed(
+                  const Duration(milliseconds: 1),
+                  () {
+                    if (mounted) {
+                      PrimaryScrollController.of(context).animateTo(
+                          PrimaryScrollController.of(context).position.maxScrollExtent,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeOut);
+                      setState(() {});
+                    }
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
