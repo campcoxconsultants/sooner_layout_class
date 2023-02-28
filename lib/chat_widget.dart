@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'chat.dart';
@@ -18,7 +21,14 @@ class SingleChat extends StatefulWidget {
 }
 
 class _SingleChatState extends State<SingleChat> {
-  bool actionsExpanded = false;
+  bool _actionsExpanded = false;
+
+  removeImage() {
+    setState(() {
+      widget.chat.image = null;
+      _actionsExpanded = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,26 +78,47 @@ class _SingleChatState extends State<SingleChat> {
                   color: Color(0xFFE2F0FE),
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
-                child: Text(widget.chat.text),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.chat.text),
+                    if (widget.chat.hasImage)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.file(
+                              widget.chat.image!,
+                              height: 200,
+                              width: 250,
+                            ),
+                            IconButton(
+                              onPressed: removeImage,
+                              icon: const Icon(Icons.close),
+                            )
+                          ],
+                        ),
+                      )
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: 8),
-            if (actionsExpanded)
+            IconButton(
+              onPressed: () {
+                print('pressed actions');
+                setState(() {
+                  _actionsExpanded = !_actionsExpanded;
+                });
+              },
+              icon: const Text('...'),
+            ),
+            if (_actionsExpanded)
               Column(children: const [
                 Text('Copy'),
                 Text('Quote'),
-                Text('Button'),
-              ])
-            else
-              IconButton(
-                onPressed: () {
-                  print('pressed actions');
-                  setState(() {
-                    actionsExpanded = !actionsExpanded;
-                  });
-                },
-                icon: const Text('...'),
-              ),
+              ]),
           ],
         ),
         SizedBox(height: widget.paddingSize),

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'chat.dart';
@@ -31,7 +34,8 @@ class _ChatEntryState extends State<ChatEntry> {
     _selectedName = widget.names.first;
     _names = ['Everyone', ...widget.names];
 
-    _controller = _ChatTextController(maxCharacters: _maxCharacters)..addListener(_onTextChanged);
+    _controller = _ChatTextController(maxCharacters: _maxCharacters)
+      ..addListener(_onTextChanged);
   }
 
   @override
@@ -43,10 +47,14 @@ class _ChatEntryState extends State<ChatEntry> {
   }
 
   int get _charactersRemaining => _maxCharacters - _controller.text.length;
+  bool get _imageSelected => _image != null;
+  File? _image;
 
-  bool get _canAddText => _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
+  bool get _canAddText =>
+      _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
 
-  Color get _charactersRemainingColor => _charactersRemaining < 0 ? Colors.red : Colors.black;
+  Color get _charactersRemainingColor =>
+      _charactersRemaining < 0 ? Colors.red : Colors.black;
 
   void _onTextChanged() {
     final text = _controller.text;
@@ -54,7 +62,8 @@ class _ChatEntryState extends State<ChatEntry> {
     if (text.length > _maxCharacters) {
       final currentOffset = _controller.selection.end;
       _controller.text = text.substring(text.length - _maxCharacters);
-      _controller.selection = TextSelection.collapsed(offset: currentOffset - 1);
+      _controller.selection =
+          TextSelection.collapsed(offset: currentOffset - 1);
     }
 
     if (text.contains(RegExp('shit'))) {
@@ -63,6 +72,25 @@ class _ChatEntryState extends State<ChatEntry> {
       _controller.selection = selection;
     }
     setState(() {});
+  }
+
+  // Handler for selecting images
+  Future getImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      setState(() {
+        _image = file;
+      });
+    } else {
+      setState(() {
+        _image = null;
+      });
+    }
   }
 
   void _callAddText() {
@@ -153,8 +181,10 @@ class _ChatEntryState extends State<ChatEntry> {
 
   Widget get _iconRow {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        IconButton(onPressed: getImage, icon: const Icon(Icons.image)),
+        const Spacer(),
         IconButton(
           onPressed: _canAddText ? _callAddText : null,
           icon: const Icon(Icons.send),
@@ -170,10 +200,13 @@ class _ChatTextController extends TextEditingController {
   final int maxCharacters;
 
   @override
-  TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
+  TextSpan buildTextSpan(
+      {required BuildContext context,
+      TextStyle? style,
+      required bool withComposing}) {
     // TODO: implement buildTextSpan
     return TextSpan(
-      text: text.substring(0, maxCharacters),
+      text: text.substring(0, text.length.clamp(0, maxCharacters)),
       style: style?.copyWith(color: Colors.red),
     );
   }

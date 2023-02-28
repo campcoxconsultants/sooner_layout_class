@@ -82,14 +82,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String get _recordingString => _isRecording ? 'Recording On' : '';
 
-  List<Chat> _chats = [
-    const Chat(
+  final List<Chat> _chats = [
+    Chat(
       fromName: 'You',
       toName: 'Everyone',
       time: '2:09 PM',
       text: 'Hello World',
     ),
-    const Chat(
+    Chat(
       fromName: 'You',
       toName: 'Everyone',
       time: '2:09 PM',
@@ -155,7 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(
                   'Who can see your messages. $_recordingString',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w300),
                 ),
               ],
             ),
@@ -174,7 +175,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   () {
                     if (mounted) {
                       PrimaryScrollController.of(context).animateTo(
-                          PrimaryScrollController.of(context).position.maxScrollExtent,
+                          PrimaryScrollController.of(context)
+                              .position
+                              .maxScrollExtent,
                           duration: const Duration(seconds: 1),
                           curve: Curves.easeOut);
                       setState(() {});
