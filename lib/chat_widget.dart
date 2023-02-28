@@ -19,6 +19,12 @@ class SingleChat extends StatefulWidget {
 
 class _SingleChatState extends State<SingleChat> {
   bool actionsExpanded = false;
+  bool imageSelected = false;
+  Future getImage() async {
+    setState(() {
+      imageSelected = !imageSelected;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,26 +74,37 @@ class _SingleChatState extends State<SingleChat> {
                   color: Color(0xFFE2F0FE),
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
-                child: Text(widget.chat.text),
+                child: Column(
+                  children: [
+                    Text(widget.chat.text),
+                    if (imageSelected)
+                      const Image(
+                        image: NetworkImage(
+                            'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                      )
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: 8),
+            IconButton(
+              onPressed: () {
+                print('pressed actions');
+                setState(() {
+                  actionsExpanded = !actionsExpanded;
+                });
+              },
+              icon: const Text('...'),
+            ),
             if (actionsExpanded)
-              Column(children: const [
-                Text('Copy'),
-                Text('Quote'),
-                Text('Button'),
-              ])
-            else
-              IconButton(
-                onPressed: () {
-                  print('pressed actions');
-                  setState(() {
-                    actionsExpanded = !actionsExpanded;
-                  });
-                },
-                icon: const Text('...'),
-              ),
+              Column(children: [
+                const Text('Copy'),
+                const Text('Quote'),
+                IconButton(
+                  onPressed: getImage,
+                  icon: const Text('Image'),
+                )
+              ]),
           ],
         ),
         SizedBox(height: widget.paddingSize),

@@ -31,7 +31,8 @@ class _ChatEntryState extends State<ChatEntry> {
     _selectedName = widget.names.first;
     _names = ['Everyone', ...widget.names];
 
-    _controller = _ChatTextController(maxCharacters: _maxCharacters)..addListener(_onTextChanged);
+    _controller = _ChatTextController(maxCharacters: _maxCharacters)
+      ..addListener(_onTextChanged);
   }
 
   @override
@@ -44,9 +45,11 @@ class _ChatEntryState extends State<ChatEntry> {
 
   int get _charactersRemaining => _maxCharacters - _controller.text.length;
 
-  bool get _canAddText => _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
+  bool get _canAddText =>
+      _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
 
-  Color get _charactersRemainingColor => _charactersRemaining < 0 ? Colors.red : Colors.black;
+  Color get _charactersRemainingColor =>
+      _charactersRemaining < 0 ? Colors.red : Colors.black;
 
   void _onTextChanged() {
     final text = _controller.text;
@@ -54,7 +57,8 @@ class _ChatEntryState extends State<ChatEntry> {
     if (text.length > _maxCharacters) {
       final currentOffset = _controller.selection.end;
       _controller.text = text.substring(text.length - _maxCharacters);
-      _controller.selection = TextSelection.collapsed(offset: currentOffset - 1);
+      _controller.selection =
+          TextSelection.collapsed(offset: currentOffset - 1);
     }
 
     if (text.contains(RegExp('shit'))) {
@@ -170,10 +174,13 @@ class _ChatTextController extends TextEditingController {
   final int maxCharacters;
 
   @override
-  TextSpan buildTextSpan({required BuildContext context, TextStyle? style, required bool withComposing}) {
+  TextSpan buildTextSpan(
+      {required BuildContext context,
+      TextStyle? style,
+      required bool withComposing}) {
     // TODO: implement buildTextSpan
     return TextSpan(
-      text: text.substring(0, maxCharacters),
+      text: text.substring(0, text.length.clamp(0, maxCharacters)),
       style: style?.copyWith(color: Colors.red),
     );
   }
