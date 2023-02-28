@@ -47,8 +47,7 @@ class _ChatEntryState extends State<ChatEntry> {
   }
 
   int get _charactersRemaining => _maxCharacters - _controller.text.length;
-  bool get _imageSelected => _image != null;
-  File? _image;
+  List<File> _images = [];
 
   bool get _canAddText =>
       _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
@@ -71,6 +70,14 @@ class _ChatEntryState extends State<ChatEntry> {
       _controller.text = text.replaceAll('shit', '****');
       _controller.selection = selection;
     }
+
+    if (text.contains(RegExp('\n'))) {
+      _controller.text = text.replaceAll('\n', '');
+      if (_controller.text.isNotEmpty) {
+        _callAddText();
+        return;
+      }
+    }
     setState(() {});
   }
 
@@ -84,11 +91,7 @@ class _ChatEntryState extends State<ChatEntry> {
     if (result != null) {
       File file = File(result.files.single.path!);
       setState(() {
-        _image = file;
-      });
-    } else {
-      setState(() {
-        _image = null;
+        _images.add(file);
       });
     }
   }
@@ -104,11 +107,20 @@ class _ChatEntryState extends State<ChatEntry> {
         // TODO: Add time
         time: '12:07',
         text: _controller.text,
+        //image: _images,
       ),
     );
 
     setState(() {
       _controller.text = '';
+      _images = [];
+    });
+  }
+
+  void _removeImage(int i) {
+    if (i < 0 || i >= _images.length) return;
+    setState(() {
+      _images.removeAt(i);
     });
   }
 
@@ -153,7 +165,6 @@ class _ChatEntryState extends State<ChatEntry> {
         if (_selectedName != _names[0])
           const Text(
             '(Direct Message)',
-            style: TextStyle(color: Colors.red),
           ),
       ],
     );
@@ -165,16 +176,48 @@ class _ChatEntryState extends State<ChatEntry> {
       children: [
         TextField(
           decoration: const InputDecoration(
+            border: InputBorder.none,
             hintText: 'Type message here ...',
           ),
           minLines: 2,
           maxLines: 4,
           controller: _controller,
         ),
+        if (_images.isNotEmpty)
+          SingleChildScrollView(
+            primary: false,
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                for (int i = 0; i < _images.length; ++i)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.file(
+                          _images[i],
+                          height: 200,
+                          fit: BoxFit.contain,
+                        ),
+                        IconButton(
+                          onPressed: () => _removeImage(i),
+                          icon: const Icon(Icons.close),
+                        )
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        const Divider(
+          height: 2.0,
+          thickness: 1.0,
+        ),
         Text(
           '$_charactersRemaining char left',
           style: TextStyle(color: _charactersRemainingColor),
-        )
+        ),
       ],
     );
   }

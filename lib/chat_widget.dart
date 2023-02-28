@@ -23,7 +23,7 @@ class SingleChat extends StatefulWidget {
 class _SingleChatState extends State<SingleChat> {
   bool _actionsExpanded = false;
 
-  removeImage() {
+  void _removeImage() {
     setState(() {
       widget.chat.image = null;
       _actionsExpanded = false;
@@ -94,7 +94,7 @@ class _SingleChatState extends State<SingleChat> {
                               width: 250,
                             ),
                             IconButton(
-                              onPressed: removeImage,
+                              onPressed: _removeImage,
                               icon: const Icon(Icons.close),
                             )
                           ],
