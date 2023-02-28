@@ -24,6 +24,8 @@ class _SingleChatState extends State<SingleChat> {
   bool actionsExpanded = false;
   bool imageSelected = false;
   late File image;
+
+  // Handler for selecting images
   Future getImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -37,8 +39,17 @@ class _SingleChatState extends State<SingleChat> {
         imageSelected = !imageSelected;
       });
     } else {
-      // User canceled the picker
+      setState(() {
+        imageSelected = !imageSelected;
+      });
     }
+  }
+
+  removeImage() {
+    setState(() {
+      imageSelected = false;
+      actionsExpanded = false;
+    });
   }
 
   @override
@@ -93,12 +104,25 @@ class _SingleChatState extends State<SingleChat> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.chat.text),
+                    if (imageSelected) const SizedBox(height: 10),
                     if (imageSelected)
-                      Image.file(
-                        image,
-                        height: 200,
-                        width: 250,
-                      ),
+                      Container(
+                        padding: const EdgeInsets.all(0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.file(
+                              image,
+                              height: 200,
+                              width: 250,
+                            ),
+                            IconButton(
+                              onPressed: removeImage,
+                              icon: const Icon(Icons.close),
+                            )
+                          ],
+                        ),
+                      )
                   ],
                 ),
               ),
@@ -119,7 +143,7 @@ class _SingleChatState extends State<SingleChat> {
                 const Text('Quote'),
                 IconButton(
                   onPressed: getImage,
-                  icon: const Text('Image'),
+                  icon: const Icon(Icons.image),
                 )
               ]),
           ],
