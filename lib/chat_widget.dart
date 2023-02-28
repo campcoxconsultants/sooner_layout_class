@@ -21,34 +21,12 @@ class SingleChat extends StatefulWidget {
 }
 
 class _SingleChatState extends State<SingleChat> {
-  bool actionsExpanded = false;
-  bool imageSelected = false;
-  late File image;
-
-  // Handler for selecting images
-  Future getImage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png'],
-    );
-
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      setState(() {
-        image = file;
-        imageSelected = !imageSelected;
-      });
-    } else {
-      setState(() {
-        imageSelected = !imageSelected;
-      });
-    }
-  }
+  bool _actionsExpanded = false;
 
   removeImage() {
     setState(() {
-      imageSelected = false;
-      actionsExpanded = false;
+      widget.chat.image = null;
+      _actionsExpanded = false;
     });
   }
 
@@ -104,15 +82,14 @@ class _SingleChatState extends State<SingleChat> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.chat.text),
-                    if (imageSelected) const SizedBox(height: 10),
-                    if (imageSelected)
-                      Container(
-                        padding: const EdgeInsets.all(0),
+                    if (widget.chat.hasImage)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Image.file(
-                              image,
+                              widget.chat.image!,
                               height: 200,
                               width: 250,
                             ),
@@ -132,19 +109,15 @@ class _SingleChatState extends State<SingleChat> {
               onPressed: () {
                 print('pressed actions');
                 setState(() {
-                  actionsExpanded = !actionsExpanded;
+                  _actionsExpanded = !_actionsExpanded;
                 });
               },
               icon: const Text('...'),
             ),
-            if (actionsExpanded)
-              Column(children: [
-                const Text('Copy'),
-                const Text('Quote'),
-                IconButton(
-                  onPressed: getImage,
-                  icon: const Icon(Icons.image),
-                )
+            if (_actionsExpanded)
+              Column(children: const [
+                Text('Copy'),
+                Text('Quote'),
               ]),
           ],
         ),

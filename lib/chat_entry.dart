@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'chat.dart';
@@ -44,6 +47,8 @@ class _ChatEntryState extends State<ChatEntry> {
   }
 
   int get _charactersRemaining => _maxCharacters - _controller.text.length;
+  bool get _imageSelected => _image != null;
+  File? _image;
 
   bool get _canAddText =>
       _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
@@ -67,6 +72,25 @@ class _ChatEntryState extends State<ChatEntry> {
       _controller.selection = selection;
     }
     setState(() {});
+  }
+
+  // Handler for selecting images
+  Future getImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      setState(() {
+        _image = file;
+      });
+    } else {
+      setState(() {
+        _image = null;
+      });
+    }
   }
 
   void _callAddText() {
@@ -157,8 +181,10 @@ class _ChatEntryState extends State<ChatEntry> {
 
   Widget get _iconRow {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        IconButton(onPressed: getImage, icon: const Icon(Icons.image)),
+        const Spacer(),
         IconButton(
           onPressed: _canAddText ? _callAddText : null,
           icon: const Icon(Icons.send),
