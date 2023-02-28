@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'chat.dart';
@@ -20,10 +23,22 @@ class SingleChat extends StatefulWidget {
 class _SingleChatState extends State<SingleChat> {
   bool actionsExpanded = false;
   bool imageSelected = false;
+  late File image;
   Future getImage() async {
-    setState(() {
-      imageSelected = !imageSelected;
-    });
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      setState(() {
+        image = file;
+        imageSelected = !imageSelected;
+      });
+    } else {
+      // User canceled the picker
+    }
   }
 
   @override
@@ -75,13 +90,15 @@ class _SingleChatState extends State<SingleChat> {
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.chat.text),
                     if (imageSelected)
-                      const Image(
-                        image: NetworkImage(
-                            'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                      )
+                      Image.file(
+                        image,
+                        height: 200,
+                        width: 250,
+                      ),
                   ],
                 ),
               ),
