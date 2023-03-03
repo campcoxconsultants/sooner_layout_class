@@ -23,10 +23,10 @@ class SingleChat extends StatefulWidget {
 class _SingleChatState extends State<SingleChat> {
   bool _actionsExpanded = false;
 
-  void _removeImage() {
+  void _removeImage(int i) {
+    if (i < 0 || i >= widget.chat.images.length) return;
     setState(() {
-      widget.chat.image = null;
-      _actionsExpanded = false;
+      widget.chat.images.removeAt(i);
     });
   }
 
@@ -82,19 +82,19 @@ class _SingleChatState extends State<SingleChat> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.chat.text),
-                    if (widget.chat.hasImage)
+                    for (int i = 0; i < widget.chat.images.length; ++i)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Image.file(
-                              widget.chat.image!,
+                              widget.chat.images[i],
                               height: 200,
                               width: 250,
                             ),
                             IconButton(
-                              onPressed: _removeImage,
+                              onPressed: () => _removeImage(i),
                               icon: const Icon(Icons.close),
                             )
                           ],
