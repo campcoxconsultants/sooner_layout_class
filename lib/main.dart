@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:layout/chat_entry.dart';
 
@@ -88,14 +90,14 @@ class _MyHomePageState extends State<MyHomePage> {
       toName: 'Everyone',
       time: '2:09 PM',
       text: 'Hello World',
-      images: List.empty(),
+      images: [],
     ),
     Chat(
       fromName: 'You',
       toName: 'Everyone',
       time: '2:09 PM',
       text: 'Hello World',
-      images: List.empty(),
+      images: [],
     )
   ];
 
