@@ -6,7 +6,7 @@ class Chat {
     required this.toName,
     required this.time,
     required this.text,
-    this.image,
+    required this.images,
   });
 
   final String fromName;
@@ -17,7 +17,7 @@ class Chat {
 
   final String text;
   // TODO: make this final (copy with)
-  File? image;
+  List<File> images = [];
 
-  bool get hasImage => image != null;
+  bool get hasImage => images.isNotEmpty;
 }

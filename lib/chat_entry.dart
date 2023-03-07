@@ -50,7 +50,8 @@ class _ChatEntryState extends State<ChatEntry> {
   List<File> _images = [];
 
   bool get _canAddText =>
-      _controller.text.isNotEmpty && _controller.text.length <= _maxCharacters;
+      ((_controller.text.isNotEmpty || _images.isNotEmpty) &&
+          _controller.text.length <= _maxCharacters);
 
   Color get _charactersRemainingColor =>
       _charactersRemaining < 0 ? Colors.red : Colors.black;
@@ -89,6 +90,7 @@ class _ChatEntryState extends State<ChatEntry> {
     );
 
     if (result != null) {
+      print("addingPicture");
       File file = File(result.files.single.path!);
       setState(() {
         _images.add(file);
@@ -107,7 +109,7 @@ class _ChatEntryState extends State<ChatEntry> {
         // TODO: Add time
         time: '12:07',
         text: _controller.text,
-        //image: _images,
+        images: _images,
       ),
     );
 
@@ -250,7 +252,7 @@ class _ChatTextController extends TextEditingController {
     // TODO: implement buildTextSpan
     return TextSpan(
       text: text.substring(0, text.length.clamp(0, maxCharacters)),
-      style: style?.copyWith(color: Colors.red),
+      style: style?.copyWith(color: Colors.black),
     );
   }
 }

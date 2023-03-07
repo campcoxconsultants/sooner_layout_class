@@ -88,12 +88,14 @@ class _MyHomePageState extends State<MyHomePage> {
       toName: 'Everyone',
       time: '2:09 PM',
       text: 'Hello World',
+      images: List.empty(),
     ),
     Chat(
       fromName: 'You',
       toName: 'Everyone',
       time: '2:09 PM',
       text: 'Hello World',
+      images: List.empty(),
     )
   ];
 
