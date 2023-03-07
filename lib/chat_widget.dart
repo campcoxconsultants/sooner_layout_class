@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:backendless_sdk/backendless_sdk.dart';
 
 import 'chat.dart';
 
@@ -28,7 +27,6 @@ class _SingleChatState extends State<SingleChat> {
   bool _actionsExpanded = false;
 
   void _deleteChat() {
-    // Backendless.data.withClass<Chat>().remove(entity: widget.chat);
     widget.removeChat(widget.chat);
   }
 
