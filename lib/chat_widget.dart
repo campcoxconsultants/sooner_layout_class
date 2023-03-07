@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:backendless_sdk/backendless_sdk.dart';
 
 import 'chat.dart';
 
@@ -10,11 +11,14 @@ class SingleChat extends StatefulWidget {
     super.key,
     required this.chat,
     this.paddingSize = 32,
+    required this.removeChat,
   });
 
   final Chat chat;
 
   final double paddingSize;
+
+  final void Function(Chat chat) removeChat;
 
   @override
   State<SingleChat> createState() => _SingleChatState();
@@ -23,11 +27,9 @@ class SingleChat extends StatefulWidget {
 class _SingleChatState extends State<SingleChat> {
   bool _actionsExpanded = false;
 
-  void _removeImage(int i) {
-    if (i < 0 || i >= widget.chat.images.length) return;
-    setState(() {
-      widget.chat.images.removeAt(i);
-    });
+  void _deleteChat() {
+    // Backendless.data.withClass<Chat>().remove(entity: widget.chat);
+    widget.removeChat(widget.chat);
   }
 
   @override
@@ -93,10 +95,6 @@ class _SingleChatState extends State<SingleChat> {
                               height: 100,
                               width: 100,
                             ),
-                            IconButton(
-                              onPressed: () => _removeImage(i),
-                              icon: const Icon(Icons.close),
-                            )
                           ],
                         ),
                       )
@@ -115,9 +113,10 @@ class _SingleChatState extends State<SingleChat> {
               icon: const Text('...'),
             ),
             if (_actionsExpanded)
-              Column(children: const [
-                Text('Copy'),
-                Text('Quote'),
+              Column(children: [
+                IconButton(
+                    onPressed: () => _deleteChat(),
+                    icon: const Icon(Icons.delete)),
               ]),
           ],
         ),

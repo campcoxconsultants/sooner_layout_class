@@ -130,6 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       SingleChat(
                         chat: _chats[i],
                         paddingSize: i == _chats.length - 1 ? 0 : 32,
+                        removeChat: (delChat) {
+                          _chats.remove(delChat);
+                          setState(() {});
+                        },
                       ),
                   ],
                 ),
