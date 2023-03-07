@@ -99,12 +99,13 @@ class _ChatEntryState extends State<ChatEntry> {
     }
   }
 
-  void getEmoji() async {
+  void _getEmoji() async {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          height: 50,
+        return SingleChildScrollView(
+          primary: false,
+          scrollDirection: Axis.horizontal,
           child: IconBar(onIconTap: (icon) {
             setState(() {
               _controller.text += icon;
@@ -246,7 +247,8 @@ class _ChatEntryState extends State<ChatEntry> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: getEmoji, icon: const Icon(Icons.emoji_emotions)),
+        IconButton(
+            onPressed: _getEmoji, icon: const Icon(Icons.emoji_emotions)),
         IconButton(onPressed: getImage, icon: const Icon(Icons.image)),
         const Spacer(),
         IconButton(
