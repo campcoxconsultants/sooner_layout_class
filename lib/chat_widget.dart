@@ -90,8 +90,8 @@ class _SingleChatState extends State<SingleChat> {
                           children: [
                             Image.file(
                               widget.chat.images[i],
-                              height: 200,
-                              width: 250,
+                              height: 100,
+                              width: 100,
                             ),
                             IconButton(
                               onPressed: () => _removeImage(i),

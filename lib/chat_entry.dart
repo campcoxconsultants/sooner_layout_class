@@ -217,8 +217,8 @@ class _ChatEntryState extends State<ChatEntry> {
                       children: [
                         Image.file(
                           _images[i],
-                          height: 200,
-                          fit: BoxFit.contain,
+                          height: 100,
+                          width: 100,
                         ),
                         IconButton(
                           onPressed: () => _removeImage(i),
