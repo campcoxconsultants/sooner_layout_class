@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import 'icon_bar.dart';
 import 'chat.dart';
 
 class ChatEntry extends StatefulWidget {
@@ -96,6 +97,23 @@ class _ChatEntryState extends State<ChatEntry> {
         _images.add(file);
       });
     }
+  }
+
+  void getEmoji() async {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 50,
+          child: IconBar(onIconTap: (icon) {
+            setState(() {
+              _controller.text += icon;
+            });
+            Navigator.pop(context);
+          }),
+        );
+      },
+    );
   }
 
   void _callAddText() {
@@ -228,6 +246,7 @@ class _ChatEntryState extends State<ChatEntry> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        IconButton(onPressed: getEmoji, icon: const Icon(Icons.emoji_emotions)),
         IconButton(onPressed: getImage, icon: const Icon(Icons.image)),
         const Spacer(),
         IconButton(
